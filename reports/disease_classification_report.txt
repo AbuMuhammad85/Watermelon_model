@@ -1,0 +1,16 @@
+=== DISEASE CLASSIFIER TEST PERFORMANCE ===
+Accuracy:    0.9486
+Macro F1:    0.9567
+Weighted F1: 0.9485
+
+Classification Report:
+                           precision    recall  f1-score   support
+
+ watermelon___anthracnose       1.00      1.00      1.00        24
+watermelon___downy_mildew       0.93      0.95      0.94        57
+     watermelon___healthy       0.94      0.97      0.95        31
+watermelon___mosaic_virus       0.95      0.92      0.94        63
+
+                 accuracy                           0.95       175
+                macro avg       0.95      0.96      0.96       175
+             weighted avg       0.95      0.95      0.95       175

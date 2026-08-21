@@ -1,0 +1,22 @@
+# Dataset folders (large binary image data — not suitable for Git)
+data/
+Watermelon/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Python caching
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Streamlit temporary folders
+reports/temp/
+reports/temp_batch/

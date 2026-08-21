@@ -1,0 +1,4 @@
+watermelon___anthracnose
+watermelon___downy_mildew
+watermelon___healthy
+watermelon___mosaic_virus

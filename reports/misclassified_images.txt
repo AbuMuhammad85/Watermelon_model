@@ -1,0 +1,124 @@
+=== BATCH EVALUATION ERROR ANALYSIS ===
+Total Images: 175
+Misclassified Count: 20
+
+File: data/processed/test/watermelon___downy_mildew\IMG_3323.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  65.12%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3332.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 99.99%
+  Disease Confidence:  67.55%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3335.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 99.99%
+  Disease Confidence:  57.61%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3339.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  48.87%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3346.jpg
+  Error Type: Misclassified Disease (Pred: watermelon___mosaic_virus, True: watermelon___downy_mildew)
+  Status:     confident
+  Detector Confidence: 100.00%
+  Disease Confidence:  85.69%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3348.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  63.57%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3349.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  55.99%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3350.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  48.06%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3358.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  52.34%
+--------------------------------------------------
+File: data/processed/test/watermelon___downy_mildew\IMG_3363.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  43.97%
+--------------------------------------------------
+File: data/processed/test/watermelon___healthy\IMG_2900.jpg
+  Error Type: Misclassified Disease (Pred: watermelon___mosaic_virus, True: watermelon___healthy)
+  Status:     confident
+  Detector Confidence: 100.00%
+  Disease Confidence:  97.55%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3033.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  55.80%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3050.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  63.89%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3055.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  65.58%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3059.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  65.25%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3063.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  66.67%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3065.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  42.56%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3066.jpg
+  Error Type: Misclassified Disease (Pred: watermelon___downy_mildew, True: watermelon___mosaic_virus)
+  Status:     confident
+  Detector Confidence: 100.00%
+  Disease Confidence:  80.52%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3067.jpg
+  Error Type: Uncertainty Reject (True Positive)
+  Status:     uncertain
+  Detector Confidence: 100.00%
+  Disease Confidence:  47.96%
+--------------------------------------------------
+File: data/processed/test/watermelon___mosaic_virus\IMG_3071.jpg
+  Error Type: Misclassified Disease (Pred: watermelon___healthy, True: watermelon___mosaic_virus)
+  Status:     confident
+  Detector Confidence: 100.00%
+  Disease Confidence:  82.59%
+--------------------------------------------------
