@@ -162,7 +162,7 @@ classifier_size = get_file_size_mb(active_config["classifier"])
 st.sidebar.markdown("### 🎚️ Decision Thresholds")
 detector_threshold = st.sidebar.slider(
     "Watermelon Detector Threshold (T_det)",
-    min_value=0.1, max_value=0.99, value=0.85, step=0.01,
+    min_value=0.1, max_value=0.99, value=0.50, step=0.01,
     help="Minimum confidence required to classify an image as a watermelon leaf."
 )
 disease_threshold = st.sidebar.slider(
@@ -306,7 +306,8 @@ with tabs[0]:
                 with m_col1:
                     st.metric("Inference Latency", f"{result['total_latency_ms']:.1f} ms")
                 with m_col2:
-                    st.metric("Watermelon Confidence", f"{result['watermelon_confidence']:.2%}")
+                    confidence_label = "Non-watermelon Confidence" if not result["is_watermelon"] else "Watermelon Confidence"
+                    st.metric(confidence_label, f"{result['watermelon_confidence']:.2%}")
                     
                 st.progress(result["watermelon_confidence"])
 
