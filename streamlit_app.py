@@ -96,7 +96,7 @@ st.markdown("""
         opacity: 0.9;
     }
     </style>
-""", unsafe_allowed_value=True)
+""", unsafe_allow_html=True)
 
 # ----------------- SESSION STATE INITS -----------------
 if 'analysis_run' not in st.session_state:
