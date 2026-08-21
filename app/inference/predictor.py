@@ -36,7 +36,7 @@ def predict_crop_and_disease(
     
     # Check if outside watermelon domain
     if det_pred < detector_threshold:
-        return {
+        res = {
             "status": "not_watermelon",
             "is_watermelon": False,
             "watermelon_confidence": float(1.0 - det_pred),
@@ -47,6 +47,7 @@ def predict_crop_and_disease(
             "classifier_latency_ms": 0.0,
             "total_latency_ms": detector_latency_ms
         }
+        return res, detector_latency_ms
         
     # Stage 2: Classifier
     disease_start_time = time.time()
@@ -73,7 +74,7 @@ def predict_crop_and_disease(
     
     # Check if prediction is below threshold
     if pred_class_prob < disease_threshold:
-        return {
+        res = {
             "status": "uncertain",
             "is_watermelon": True,
             "watermelon_confidence": float(det_pred),
@@ -84,8 +85,9 @@ def predict_crop_and_disease(
             "classifier_latency_ms": classifier_latency_ms,
             "total_latency_ms": total_latency_ms
         }
+        return res, total_latency_ms
         
-    return {
+    res = {
         "status": "confident",
         "is_watermelon": True,
         "watermelon_confidence": float(det_pred),
@@ -96,3 +98,4 @@ def predict_crop_and_disease(
         "classifier_latency_ms": classifier_latency_ms,
         "total_latency_ms": total_latency_ms
     }
+    return res, total_latency_ms
