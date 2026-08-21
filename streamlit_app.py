@@ -247,8 +247,8 @@ with tabs[0]:
                 st.error("Error: Models are not loaded. Check model paths in configuration.")
             else:
                 with st.spinner("Processing analysis pipeline..."):
-                    # Execute prediction (Returns single dict)
-                    result = predict_crop_and_disease(
+                    # Safe prediction execution handling both dict and tuple returns
+                    prediction_output = predict_crop_and_disease(
                         image=st.session_state.active_image_path,
                         detector_model=detector_model,
                         disease_model=disease_model,
@@ -256,6 +256,11 @@ with tabs[0]:
                         detector_threshold=detector_threshold,
                         disease_threshold=disease_threshold
                     )
+                    
+                    if isinstance(prediction_output, tuple):
+                        result = prediction_output[0]
+                    else:
+                        result = prediction_output
                     
                 # ----------------- Display results card -----------------
                 st.subheader("🏁 Classification Output")
@@ -402,8 +407,8 @@ with tabs[2]:
             for idx, file in enumerate(batch_files):
                 temp_path = save_uploaded_file(file, temp_dir="reports/temp_batch")
                 
-                # Predict
-                res = predict_crop_and_disease(
+                # Predict safely
+                batch_pred_output = predict_crop_and_disease(
                     image=temp_path,
                     detector_model=detector_model,
                     disease_model=disease_model,
@@ -411,6 +416,11 @@ with tabs[2]:
                     detector_threshold=detector_threshold,
                     disease_threshold=disease_threshold
                 )
+                
+                if isinstance(batch_pred_output, tuple):
+                    res = batch_pred_output[0]
+                else:
+                    res = batch_pred_output
                 
                 batch_results.append({
                     "Filename": file.name,
