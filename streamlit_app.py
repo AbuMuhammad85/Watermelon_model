@@ -247,8 +247,8 @@ with tabs[0]:
                 st.error("Error: Models are not loaded. Check model paths in configuration.")
             else:
                 with st.spinner("Processing analysis pipeline..."):
-                    # Execute prediction
-                    result, latency = predict_crop_and_disease(
+                    # Execute prediction (Returns single dict)
+                    result = predict_crop_and_disease(
                         image=st.session_state.active_image_path,
                         detector_model=detector_model,
                         disease_model=disease_model,
@@ -264,7 +264,6 @@ with tabs[0]:
                 
                 # CONFIDENT STATE
                 if status == "confident":
-                    # English / Hausa localized results card
                     hausa_desc = get_label_info(result["disease"], "ha")
                     st.markdown(f"""
                     <div class="result-card card-confident">
@@ -273,7 +272,7 @@ with tabs[0]:
                         <div class="result-subtitle"><strong>Karin Bayani (Hausa):</strong> {hausa_desc}</div>
                         <div class="result-subtitle"><strong>Pipeline Status:</strong> {get_label_info('confident', 'ha')} (CONFIDENT)</div>
                     </div>
-                    """, unsafe_allowed_html=True)
+                    """, unsafe_allow_html=True)
                     
                 # UNCERTAIN STATE
                 elif status == "uncertain":
@@ -283,7 +282,7 @@ with tabs[0]:
                         <div class="result-subtitle">The model identified a watermelon leaf but is not confident in the specific disease class.</div>
                         <div class="result-subtitle"><strong>Hausa Guideline:</strong> {get_label_info('uncertain', 'ha')}</div>
                     </div>
-                    """, unsafe_allowed_html=True)
+                    """, unsafe_allow_html=True)
                     st.warning("⚠️ Recommendation: Adjust photo alignment or provide a clearer image with less glare/background clutter.")
                     
                 # REJECTED STATE
@@ -294,7 +293,7 @@ with tabs[0]:
                         <div class="result-subtitle">The image was rejected as NOT watermelon leaf because it is outside the supported crop leaf domain.</div>
                         <div class="result-subtitle"><strong>Hausa translation:</strong> {get_label_info('not_watermelon', 'ha')}</div>
                     </div>
-                    """, unsafe_allowed_html=True)
+                    """, unsafe_allow_html=True)
                     st.error("❌ The disease classification step was bypassed for safety. No disease diagnosis is displayed for rejected crops.")
 
                 # Latency & performance stats
@@ -306,11 +305,10 @@ with tabs[0]:
                     
                 st.progress(result["watermelon_confidence"])
 
-                # Disease Probability Rank List (only if watermelon is detected)
+                # Disease Probability Rank List
                 if result["is_watermelon"]:
                     st.markdown("### 📊 Disease Probabilities")
                     
-                    # Convert to pandas frame to plot rank list
                     prob_df = pd.DataFrame([
                         {
                             "Disease": get_label_info(k, "en"),
@@ -322,7 +320,6 @@ with tabs[0]:
                     
                     st.table(prob_df[["Disease", "Hausa (Karin Bayani)", "Probability"]])
                     
-                    # High vs Low confidence alert
                     if status == "confident":
                         st.success(f"✔️ Confidence score of **{result['disease_confidence']:.2%}** exceeds the safety threshold of **{disease_threshold:.2%}**.")
                     else:
@@ -333,7 +330,6 @@ with tabs[0]:
                 st.subheader("🔥 Model Explanation (Grad-CAM)")
                 
                 if active_config["format"] == "keras":
-                    # Keras model supports Grad-CAM
                     with st.spinner("Generating Grad-CAM features..."):
                         gradcam_res = run_gradcam_explanation(
                             model=disease_model,
@@ -353,7 +349,6 @@ with tabs[0]:
                     else:
                         st.warning("⚠️ Grad-CAM model tracing failed. Make sure the backbone contains the target convolutional layers.")
                 else:
-                    # TFLite format
                     st.info("💡 **Grad-CAM is unavailable for this model format.** TFLite models are flatbuffer binaries optimized for edge execution and lack symbolic backpropagation gradients. Select 'TensorFlow / Keras (H5)' in the sidebar configuration to inspect Grad-CAM visualizations.")
         else:
             st.info("👈 Upload an image or capture a photo in the upload section to run model diagnostics.")
@@ -405,11 +400,10 @@ with tabs[2]:
             status_text = st.empty()
             
             for idx, file in enumerate(batch_files):
-                # Save locally
                 temp_path = save_uploaded_file(file, temp_dir="reports/temp_batch")
                 
                 # Predict
-                res, latency = predict_crop_and_disease(
+                res = predict_crop_and_disease(
                     image=temp_path,
                     detector_model=detector_model,
                     disease_model=disease_model,
@@ -428,22 +422,18 @@ with tabs[2]:
                     "Latency (ms)": f"{res['total_latency_ms']:.1f}"
                 })
                 
-                # Cleanup temp file
                 try:
                     os.remove(temp_path)
                 except:
                     pass
                 
-                # Update progress
                 progress = (idx + 1) / len(batch_files)
                 progress_bar.progress(progress)
                 status_text.text(f"Processed {idx + 1}/{len(batch_files)} images...")
                 
-            # Convert to DataFrame
             batch_df = pd.DataFrame(batch_results)
             st.dataframe(batch_df)
             
-            # Calculate summary stats
             accepted_count = sum(1 for r in batch_results if r["Watermelon Detected"] == "YES")
             rejected_count = len(batch_results) - accepted_count
             avg_latency = np.mean([float(r["Latency (ms)"]) for r in batch_results])
@@ -454,7 +444,6 @@ with tabs[2]:
             s_col2.metric("Rejected (Non-Watermelon)", f"{rejected_count} / {len(batch_results)}")
             s_col3.metric("Avg Inference Latency", f"{avg_latency:.1f} ms")
             
-            # Download CSV option
             csv_data = batch_df.to_csv(index=False).encode('utf-8')
             st.download_button(
                 label="📥 Download Batch Results as CSV",
@@ -467,7 +456,6 @@ with tabs[2]:
 with tabs[3]:
     st.header("📊 Model Evaluation & Training Reports")
     
-    # Load parsed statistics
     eval_metrics = load_evaluation_metrics()
     
     if not eval_metrics["raw_report"]:
@@ -483,7 +471,6 @@ with tabs[3]:
         st.markdown("#### Full Classification Report")
         st.code(eval_metrics["raw_report"])
         
-        # Display Confusion Matrices
         st.markdown("---")
         st.subheader("🌀 Confusion Matrices")
         
@@ -502,7 +489,6 @@ with tabs[3]:
             else:
                 st.info("Detector Confusion Matrix plot not found.")
                 
-        # Display Training History Curves
         st.markdown("---")
         st.subheader("📈 Training History Curves")
         st.markdown("The following charts display the training history logs on CPU (Stage A: head training vs Stage B: fine-tuning epochs):")
@@ -517,7 +503,6 @@ with tabs[3]:
             if os.path.exists(stage_b_loss):
                 st.image(stage_b_loss, caption="Disease Classifier Fine-Tuning Loss", use_container_width=True)
                 
-        # Out-of-Domain Rejection Markdown Table
         if eval_metrics["ood_report"]:
             st.markdown("---")
             st.subheader("🛡️ Held-Out Out-of-Domain (OOD) Rejection Performance")
@@ -536,14 +521,12 @@ Available CPUs:      {os.cpu_count()} cores
 GPU Support Available: No CUDA GPUs detected (falling back to CPU runtime)
 """)
     
-    # Quantization Verification Section
     st.markdown("---")
     st.subheader("🧪 TFLite Quantization Parameters (INT8 Verification)")
     
     if "int8" in active_config["detector"].lower() or "int8" in active_config["classifier"].lower():
         st.success("✔️ ACTIVE CONFIGURATION IS INT8 QUANTIZED. VERIFICATION STATS BELOW:")
         
-        # Load and extract parameter details
         for name, path in [("Binary Detector", active_config["detector"]), ("Disease Classifier", active_config["classifier"])]:
             if os.path.exists(path):
                 interpreter = tf.lite.Interpreter(model_path=path)
@@ -571,7 +554,6 @@ GPU Support Available: No CUDA GPUs detected (falling back to CPU runtime)
     else:
         st.info("💡 Select the TFLite INT8 model configuration in the sidebar to inspect integer quantization scale parameters, input zero points, and data types.")
         
-    # Model size comparison markdown table
     if eval_metrics["quantization_report"]:
         st.markdown("---")
         st.subheader("📦 Model Quantization & Size Summary Report")
