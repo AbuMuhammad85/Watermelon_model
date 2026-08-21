@@ -8,7 +8,7 @@ def predict_crop_and_disease(
     detector_model,
     disease_model,
     model_format="keras",
-    detector_threshold=0.85,
+    detector_threshold=0.50,
     disease_threshold=0.70,
     labels=None
 ):

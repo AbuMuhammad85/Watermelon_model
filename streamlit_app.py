@@ -116,7 +116,7 @@ st.sidebar.markdown("# ⚙️ Model Configuration")
 model_format_option = st.sidebar.selectbox(
     "Select Model Format",
     options=["TensorFlow / Keras (H5)", "TFLite Float32", "TFLite Float16", "TFLite INT8"],
-    index=3  # Default to INT8 TFLite for edge validation
+    index=1  # Use Float32 TFLite as the numerical reference for inference
 )
 
 # Set model paths based on selection
