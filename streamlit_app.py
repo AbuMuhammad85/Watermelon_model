@@ -158,22 +158,42 @@ def get_file_size_mb(path):
 detector_size = get_file_size_mb(active_config["detector"])
 classifier_size = get_file_size_mb(active_config["classifier"])
 
-# Threshold Sliders
-st.sidebar.markdown("### 🎚️ Decision Thresholds")
+# Environment Presets
+st.sidebar.markdown("### 🎚️ Decision Thresholds & Presets")
+preset_option = st.sidebar.selectbox(
+    "Testing Environment Preset",
+    options=["🔬 Laboratory Single-Leaf (Default)", "🌾 Real-World Field Testing", "🛠️ Custom Sliders"],
+    index=0,
+    help="Presets automatically adjust thresholds for clean laboratory photos vs complex outdoor field photographs."
+)
+
+if preset_option == "🌾 Real-World Field Testing":
+    default_t_det = 0.15
+    default_t_dis = 0.50
+    default_bypass = True
+elif preset_option == "🔬 Laboratory Single-Leaf (Default)":
+    default_t_det = 0.50
+    default_t_dis = 0.70
+    default_bypass = False
+else:
+    default_t_det = 0.50
+    default_t_dis = 0.70
+    default_bypass = False
+
 detector_threshold = st.sidebar.slider(
     "Watermelon Detector Threshold (T_det)",
-    min_value=0.1, max_value=0.99, value=0.50, step=0.01,
+    min_value=0.01, max_value=0.99, value=default_t_det, step=0.01,
     help="Minimum confidence required to classify an image as a watermelon leaf."
 )
 disease_threshold = st.sidebar.slider(
     "Disease Classifier Threshold (T_dis)",
-    min_value=0.1, max_value=0.99, value=0.70, step=0.01,
+    min_value=0.01, max_value=0.99, value=default_t_dis, step=0.01,
     help="Minimum confidence required to diagnose a specific leaf disease confidently."
 )
 
 bypass_detector = st.sidebar.checkbox(
     "🧪 Bypass Detector (Force Disease Inference)",
-    value=False,
+    value=default_bypass,
     help="Force run the 4-class disease classifier on field images even if the baseline detector flags them as non-watermelon."
 )
 
