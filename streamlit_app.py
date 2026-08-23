@@ -294,8 +294,9 @@ with tabs[0]:
                 elif status == "not_watermelon":
                     st.markdown(f"""
                     <div class="result-card card-rejected">
-                        <div class="result-title">❌ Image Rejected (An Yi Watsi)</div>
-                        <div class="result-subtitle">The image was rejected as NOT watermelon leaf because it is outside the supported crop leaf domain.</div>
+                        <div class="result-title">❌ Image Classified as NOT WATERMELON</div>
+                        <div class="result-subtitle">The detector confidence for watermelon (<strong>{result['watermelon_confidence']:.2%}</strong>) is below the configured threshold (<strong>{detector_threshold:.2%}</strong>).</div>
+                        <div class="result-subtitle">The image may contain another crop, background vegetation, or an outdoor field condition that the current baseline detector does not recognize as a watermelon leaf.</div>
                         <div class="result-subtitle"><strong>Hausa translation:</strong> {get_label_info('not_watermelon', 'ha')}</div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -306,10 +307,11 @@ with tabs[0]:
                 with m_col1:
                     st.metric("Inference Latency", f"{result['total_latency_ms']:.1f} ms")
                 with m_col2:
-                    confidence_label = "Non-watermelon Confidence" if not result["is_watermelon"] else "Watermelon Confidence"
-                    st.metric(confidence_label, f"{result['watermelon_confidence']:.2%}")
+                    confidence_label = "Watermelon Confidence" if result["is_watermelon"] else "Non-Watermelon Probability"
+                    confidence_val = result["watermelon_confidence"] if result["is_watermelon"] else result.get("not_watermelon_probability", 1.0 - result["watermelon_confidence"])
+                    st.metric(confidence_label, f"{confidence_val:.2%}")
                     
-                st.progress(result["watermelon_confidence"])
+                st.progress(confidence_val)
 
                 # Disease Probability Rank List
                 if result["is_watermelon"]:
@@ -330,6 +332,40 @@ with tabs[0]:
                         st.success(f"✔️ Confidence score of **{result['disease_confidence']:.2%}** exceeds the safety threshold of **{disease_threshold:.2%}**.")
                     else:
                         st.info(f"ℹ️ Disease confidence of **{result['disease_confidence']:.2%}** falls below safety threshold of **{disease_threshold:.2%}**.")
+
+                # ----------------- Technical Details Expander -----------------
+                with st.expander("🔬 Technical Inference Details", expanded=False):
+                    st.markdown("#### Detector Stage Details")
+                    d1, d2 = st.columns(2)
+                    with d1:
+                        st.write(f"**Model File**: `{active_config['detector']}`")
+                        st.write(f"**Model Format**: `{active_config['format'].upper()}` ({active_config['precision']})")
+                        st.write(f"**Input Tensor Shape**: `(1, 224, 224, 3)`")
+                        st.write(f"**Normalization**: `mobilenet_v2.preprocess_input` ([-1.0, 1.0])")
+                    with d2:
+                        st.write(f"**Raw Sigmoid Output**: `{result.get('raw_detector_output', 0.0):.6f}`")
+                        st.write(f"**Watermelon Probability**: `{result.get('watermelon_probability', 0.0):.4%}`")
+                        st.write(f"**Non-Watermelon Probability**: `{result.get('not_watermelon_probability', 0.0):.4%}`")
+                        st.write(f"**Detector Threshold ($T_{{det}}$)**: `{detector_threshold:.2f}`")
+                        st.write(f"**Detector Decision**: `{result.get('detector_decision', 'N/A')}`")
+
+                    st.markdown("---")
+                    st.markdown("#### Disease Classifier Stage Details")
+                    if result["is_watermelon"]:
+                        st.write(f"**Classifier Status**: `EXECUTED`")
+                        st.write(f"**Classifier Model**: `{active_config['classifier']}`")
+                        st.write(f"**Disease Threshold ($T_{{dis}}$)**: `{disease_threshold:.2f}`")
+                        st.write(f"**Top Predicted Class**: `{result.get('disease')}`")
+                        st.write(f"**Top Class Confidence**: `{result.get('disease_confidence', 0.0):.4%}`")
+                    else:
+                        st.write(f"**Classifier Status**: `NOT RUN` (Bypassed by detector)")
+                        st.write(f"**Reason**: Detector confidence ({result['watermelon_confidence']:.2%}) < Threshold ({detector_threshold:.2%})")
+
+                    st.markdown("---")
+                    st.markdown("#### Latency Breakdown")
+                    st.write(f"**Detector Latency**: `{result['detector_latency_ms']:.1f} ms`")
+                    st.write(f"**Classifier Latency**: `{result['classifier_latency_ms']:.1f} ms`")
+                    st.write(f"**Total Inference Latency**: `{result['total_latency_ms']:.1f} ms`")
 
                 # ----------------- Grad-CAM explainability -----------------
                 st.markdown("---")
@@ -355,7 +391,7 @@ with tabs[0]:
                     else:
                         st.warning("⚠️ Grad-CAM model tracing failed. Make sure the backbone contains the target convolutional layers.")
                 else:
-                    st.info("💡 **Grad-CAM is unavailable for this model format.** TFLite models are flatbuffer binaries optimized for edge execution and lack symbolic backpropagation gradients. Select 'TensorFlow / Keras (H5)' in the sidebar configuration to inspect Grad-CAM visualizations.")
+                    st.info("ℹ️ **Grad-CAM Explainability is available for TensorFlow / Keras H5 models.**\n\nThe currently active TFLite model is a flatbuffer binary optimized for edge execution and does not expose symbolic gradient tapes required for Grad-CAM.\n\nTo inspect Grad-CAM heatmaps, select **'TensorFlow / Keras (H5)'** in the sidebar configuration.")
         else:
             st.info("👈 Upload an image or capture a photo in the upload section to run model diagnostics.")
 
