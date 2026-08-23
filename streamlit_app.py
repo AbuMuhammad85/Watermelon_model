@@ -227,22 +227,14 @@ with tabs[0]:
             st.session_state.active_image_path = save_uploaded_file(active_image)
             st.session_state.active_image_label = active_image.name
             
-            # Reset analysis state if a new file is uploaded
-            st.session_state.analysis_run = False
-            
             # Show original image metadata
             img = Image.open(st.session_state.active_image_path)
-            st.image(img, caption="Uploaded Original Image", use_container_width=True)
-            
-            st.write(f"**Image Dimensions**: {img.width}x{img.height} pixels | **Format**: {img.format} | **Size**: {os.path.getsize(st.session_state.active_image_path)/1024:.1f} KB")
-            
-            # Trigger analysis
-            if st.button("🔍 Analyze Image", type="primary"):
-                st.session_state.analysis_run = True
+            st.image(img, caption=f"Active Image: {active_image.name}", use_container_width=True)
+            st.write(f"**Dimensions**: {img.width}x{img.height} px | **Format**: {img.format} | **Size**: {os.path.getsize(st.session_state.active_image_path)/1024:.1f} KB")
 
     # ----------------- Inference execution -----------------
     with col2:
-        if st.session_state.active_image_path is not None and st.session_state.analysis_run:
+        if st.session_state.active_image_path is not None and os.path.exists(st.session_state.active_image_path):
             if detector_model is None or disease_model is None:
                 st.error("Error: Models are not loaded. Check model paths in configuration.")
             else:
@@ -420,7 +412,6 @@ with tabs[1]:
         if os.path.exists(sample_to_load):
             st.session_state.active_image_path = sample_to_load
             st.session_state.active_image_label = os.path.basename(sample_to_load)
-            st.session_state.analysis_run = True
             st.success(f"Loaded sample image: `{os.path.basename(sample_to_load)}`. Please switch back to the **📷 Upload & Analyze** tab to view classification reports, metrics, and Grad-CAM maps.")
         else:
             st.error(f"Sample file not found at: `{sample_to_load}`. Verify dataset processed folders exist.")
