@@ -171,6 +171,12 @@ disease_threshold = st.sidebar.slider(
     help="Minimum confidence required to diagnose a specific leaf disease confidently."
 )
 
+bypass_detector = st.sidebar.checkbox(
+    "🧪 Bypass Detector (Force Disease Inference)",
+    value=False,
+    help="Force run the 4-class disease classifier on field images even if the baseline detector flags them as non-watermelon."
+)
+
 # Display model metadata in sidebar
 st.sidebar.markdown("### ℹ️ Active Model Metadata")
 st.sidebar.info(f"""
@@ -246,7 +252,8 @@ with tabs[0]:
                         disease_model=disease_model,
                         model_format=active_config["format"],
                         detector_threshold=detector_threshold,
-                        disease_threshold=disease_threshold
+                        disease_threshold=disease_threshold,
+                        bypass_detector=bypass_detector
                     )
                     
                     if isinstance(prediction_output, tuple):
@@ -292,7 +299,7 @@ with tabs[0]:
                         <div class="result-subtitle"><strong>Hausa translation:</strong> {get_label_info('not_watermelon', 'ha')}</div>
                     </div>
                     """, unsafe_allow_html=True)
-                    st.error("❌ The disease classification step was bypassed for safety. No disease diagnosis is displayed for rejected crops.")
+                    st.info("💡 **Field Test Validation Tip**: If this is a real watermelon leaf rejected due to outdoor background domain shift, check **'🧪 Bypass Detector (Force Disease Inference)'** in the sidebar to inspect the 4-class disease classifier predictions.")
 
                 # Latency & performance stats
                 m_col1, m_col2 = st.columns(2)

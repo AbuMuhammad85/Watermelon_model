@@ -10,7 +10,8 @@ def predict_crop_and_disease(
     model_format="keras",
     detector_threshold=0.50,
     disease_threshold=0.70,
-    labels=None
+    labels=None,
+    bypass_detector=False
 ):
     """
     Executes the two-stage cascade prediction on an image.
@@ -34,8 +35,8 @@ def predict_crop_and_disease(
         
     detector_latency_ms = (time.time() - start_time) * 1000
     
-    # Check if outside watermelon domain
-    if det_pred < detector_threshold:
+    # Check if outside watermelon domain (unless bypassed for validation testing)
+    if det_pred < detector_threshold and not bypass_detector:
         res = {
             "status": "not_watermelon",
             "is_watermelon": False,
