@@ -19,8 +19,8 @@ from app.utils.metrics import load_evaluation_metrics
 
 # Set Page Config
 st.set_page_config(
-    page_title="Watermelon AI Diagnostics Dashboard",
-    page_icon="🍉",
+    page_title="Noma AI — Model Validation Dashboard",
+    page_icon="🌿",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -195,8 +195,8 @@ else:
     disease_model = load_tflite_interpreter(active_config["classifier"])
 
 # ----------------- MAIN HEADER -----------------
-st.title("🍉 WATERMELON AI DIAGNOSTICS")
-st.subheader("Model Evaluation & Explainability Dashboard")
+st.title("🌿 NOMA AI — Model Validation Dashboard")
+st.subheader("Standalone ML Testing & Evaluation Environment")
 st.markdown("""
 *This dashboard evaluates the two-stage cascading vision pipeline designed for offline smartphone leaf diagnostics.*
 *Upload a crop image below to evaluate binary domain rejection, disease classification probability distributions, edge latency, and Grad-CAM explainability.*
